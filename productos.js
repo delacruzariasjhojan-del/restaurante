@@ -1,0 +1,292 @@
+// =============================================================
+// productos.js
+// Vive solo en carta.html. Trae productos y promociones desde
+// Firestore y controla las pestañas de categoría (con "Promociones"
+// como una pestaña más), el buscador y los chips de filtro de precio.
+//
+// Comunica con carrito.js mediante el CustomEvent "carrito:agregar"
+// en vez de importarlo directamente.
+// =============================================================
+
+import { db, collection, getDocs, COL_PRODUCTOS, COL_PROMOCIONES } from "./firebase.js";
+
+// Estado en memoria: se piden una sola vez a Firestore y luego solo
+// se filtran/re-pintan en el cliente.
+let todosLosProductos = [];
+let todasLasPromos = [];
+
+const gridProductos = document.getElementById("productos-grid");
+const estadoProductos = document.getElementById("productos-estado");
+
+const inputBuscador = document.getElementById("buscador");
+const tabsPrecio = document.getElementById("filtro-precio-tabs");
+const tabsCategorias = document.getElementById("categorias-tabs");
+
+let categoriaActiva = "Plato Principal";
+let rangoPrecioActivo = "todos";
+
+// -------------------------------------------------------------
+// Utilidades
+// -------------------------------------------------------------
+function formatearPrecio(valor) {
+  return `S/ ${(Number(valor) || 0).toFixed(2)}`;
+}
+
+function calcularDescuento(precio, precioAntes) {
+  if (!precioAntes || precioAntes <= precio) return null;
+  return Math.round(((precioAntes - precio) / precioAntes) * 100);
+}
+
+// Normaliza texto para comparar categorías sin que fallen por mayúsculas,
+// tildes o espacios de más (ej. "Plato Principal " === "plato principal").
+function normalizarTexto(texto) {
+  return (texto || "")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+// -------------------------------------------------------------
+// Tarjeta: sirve tanto para productos del menú como para promociones,
+// porque ambos se normalizan al mismo formato antes de pintarlos.
+// -------------------------------------------------------------
+function crearTarjeta(item) {
+  const disponible = item.disponible !== false;
+  const descuento = calcularDescuento(item.precio, item.precioAntes);
+
+  const card = document.createElement("article");
+  card.className = "producto-card";
+  card.dataset.id = item.id;
+
+  card.innerHTML = `
+    <div class="producto-media">
+      <img src="${item.imagen || "https://via.placeholder.com/400x300?text=Sin+imagen"}"
+           alt="${item.nombre}" loading="lazy">
+      ${descuento ? `<span class="tag-descuento">-${descuento}%</span>` : ""}
+      ${!disponible ? `<span class="tag-agotado">Agotado</span>` : ""}
+      <button class="fav-btn" type="button" aria-label="Guardar en favoritos" aria-pressed="false">♡</button>
+    </div>
+    <div class="producto-body">
+      <span class="producto-cat">${item.categoriaMostrar || ""}</span>
+      <h3 class="producto-nombre">${item.nombre}</h3>
+      <p class="producto-desc">${item.descripcion || ""}</p>
+      <div class="producto-precio-row">
+        <div class="producto-precios">
+          <span class="precio-actual">${formatearPrecio(item.precio)}</span>
+          ${item.precioAntes ? `<span class="precio-antes">${formatearPrecio(item.precioAntes)}</span>` : ""}
+        </div>
+        <button class="btn-agregar-circular" data-id="${item.id}" ${disponible ? "" : "disabled"} aria-label="Agregar al carrito">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+// -------------------------------------------------------------
+// Pinta el grid según la pestaña activa (Promociones o una categoría)
+// -------------------------------------------------------------
+function pintarGrid(lista) {
+  gridProductos.innerHTML = "";
+
+  if (lista.length === 0) {
+    const vacio = document.createElement("p");
+    vacio.className = "productos-estado";
+    vacio.textContent = "No encontramos platos con esos filtros. Prueba con otra búsqueda.";
+    gridProductos.appendChild(vacio);
+    return;
+  }
+
+  const fragmento = document.createDocumentFragment();
+  lista.forEach((item) => fragmento.appendChild(crearTarjeta(item)));
+  gridProductos.appendChild(fragmento);
+}
+
+function aplicarFiltrosYPintar() {
+  const texto = (inputBuscador?.value || "").trim();
+  const hayBusqueda = texto.length > 0;
+
+  // Mientras hay algo escrito en el buscador, ninguna pestaña de categoría
+  // queda marcada como activa (visualmente), porque el buscador manda y
+  // busca en todo, sin importar la categoría seleccionada.
+  tabsCategorias?.querySelectorAll(".tab-cat-icono").forEach((boton) => {
+    boton.classList.toggle("active", !hayBusqueda && boton.dataset.cat === categoriaActiva);
+  });
+
+  let fuente;
+  if (hayBusqueda) {
+    fuente = [...todosLosProductos, ...todasLasPromos]; // el buscador rompe el filtro de categoría
+  } else if (categoriaActiva === "todos") {
+    fuente = todosLosProductos; // pestaña "Todos": todos los platos, sin filtrar por categoría
+  } else if (categoriaActiva === "Promociones") {
+    fuente = todasLasPromos;
+  } else {
+    fuente = todosLosProductos;
+  }
+
+  const filtrados = fuente.filter((item) => {
+    if (!hayBusqueda) {
+      const esCategoriaEspecifica = categoriaActiva !== "todos" && categoriaActiva !== "Promociones";
+      if (esCategoriaEspecifica && normalizarTexto(item.categoria) !== normalizarTexto(categoriaActiva)) return false;
+    }
+
+    if (hayBusqueda) {
+      const coincideNombre = normalizarTexto(item.nombre).includes(normalizarTexto(texto));
+      const coincideDescripcion = normalizarTexto(item.descripcion).includes(normalizarTexto(texto));
+      const coincideCategoria = normalizarTexto(item.categoria || item.categoriaMostrar).includes(normalizarTexto(texto));
+      if (!coincideNombre && !coincideDescripcion && !coincideCategoria) return false;
+    }
+
+    const precio = Number(item.precio) || 0;
+    if (rangoPrecioActivo === "1" && precio > 20) return false;
+    if (rangoPrecioActivo === "2" && (precio < 20 || precio > 40)) return false;
+    if (rangoPrecioActivo === "3" && precio <= 40) return false;
+
+    return true;
+  });
+
+  pintarGrid(filtrados);
+}
+
+// -------------------------------------------------------------
+// Carga de datos desde Firestore
+// -------------------------------------------------------------
+async function cargarProductos() {
+  const snapshot = await getDocs(collection(db, COL_PRODUCTOS));
+  todosLosProductos = snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
+    // Traduce el esquema real de Firestore (en inglés) al formato
+    // interno que usan las tarjetas (en español). Acepta "category" o
+    // "categoria" por si el documento quedó con cualquiera de los dos.
+    const categoria = data.category || data.categoria || "";
+    return {
+      id: docSnap.id,
+      nombre: data.name || data.nombre || "Producto sin nombre",
+      descripcion: data.description || data.descripcion || "",
+      precio: data.price ?? data.precio,
+      precioAntes: data.priceBefore ?? data.precioAntes, // opcional, si algún día agregas ese campo
+      categoria,
+      categoriaMostrar: categoria,
+      imagen: data.imagePath || data.imagen || "",
+      disponible: (data.available ?? data.disponible) !== false, // si no existe el campo, se asume disponible
+      popular: !!data.isPopular,
+      rating: data.rating,
+      reviews: data.reviews,
+      ingredientes: data.ingredients || [],
+    };
+  });
+
+  // Diagnóstico: abre la consola del navegador (F12) para ver esto.
+  console.log(`[productos] Documentos leídos de "${COL_PRODUCTOS}":`, todosLosProductos.length);
+  console.log(
+    "[productos] Categorías detectadas:",
+    [...new Set(todosLosProductos.map((p) => p.categoria))]
+  );
+}
+
+async function cargarPromociones() {
+  const snapshot = await getDocs(collection(db, COL_PROMOCIONES));
+  todasLasPromos = snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
+    // Normaliza el documento de "promociones" al mismo formato que
+    // usan las tarjetas de producto (nombre/descripcion/imagen/precio).
+    return {
+      id: docSnap.id,
+      nombre: data.titulo || data.nombre || "Promoción",
+      descripcion: data.descripcion || "",
+      precio: data.precio,
+      precioAntes: data.precioAntes,
+      imagen: data.imagen,
+      disponible: data.disponible !== false,
+      categoriaMostrar: "Promoción",
+    };
+  });
+
+  console.log(`[promociones] Documentos leídos de "${COL_PROMOCIONES}":`, todasLasPromos.length);
+}
+
+async function iniciarCarga() {
+  try {
+    await Promise.all([cargarProductos(), cargarPromociones()]);
+    aplicarFiltrosYPintar();
+  } catch (error) {
+    console.error("Error al cargar la carta desde Firestore:", error);
+    gridProductos.innerHTML = "";
+    const mensaje = document.createElement("p");
+    mensaje.className = "productos-estado";
+    mensaje.textContent = "No se pudo cargar la carta. Verifica tu conexión o la configuración de Firebase.";
+    gridProductos.appendChild(mensaje);
+  }
+}
+
+/** Devuelve un producto o promoción ya cargado en memoria, por id. */
+export function obtenerProductoPorId(id) {
+  return (
+    todosLosProductos.find((p) => p.id === id) ||
+    todasLasPromos.find((p) => p.id === id) ||
+    null
+  );
+}
+
+// -------------------------------------------------------------
+// Pestañas de categoría (incluye "Promociones")
+// -------------------------------------------------------------
+tabsCategorias?.addEventListener("click", (evento) => {
+  const boton = evento.target.closest(".tab-cat-icono");
+  if (!boton) return;
+
+  categoriaActiva = boton.dataset.cat;
+  tabsCategorias.querySelectorAll(".tab-cat-icono").forEach((b) => b.classList.remove("active"));
+  boton.classList.add("active");
+
+  aplicarFiltrosYPintar();
+});
+
+// -------------------------------------------------------------
+// Chips de filtro de precio (reemplazan al <select> anterior)
+// -------------------------------------------------------------
+tabsPrecio?.addEventListener("click", (evento) => {
+  const boton = evento.target.closest(".tab-cat");
+  if (!boton) return;
+
+  rangoPrecioActivo = boton.dataset.precio;
+  tabsPrecio.querySelectorAll(".tab-cat").forEach((b) => b.classList.remove("active"));
+  boton.classList.add("active");
+
+  aplicarFiltrosYPintar();
+});
+
+// -------------------------------------------------------------
+// Buscador (sin cambios)
+// -------------------------------------------------------------
+inputBuscador?.addEventListener("input", aplicarFiltrosYPintar);
+
+// -------------------------------------------------------------
+// Agregar al carrito (delegación) y favoritos (solo visual)
+// -------------------------------------------------------------
+gridProductos?.addEventListener("click", (evento) => {
+  const botonAgregar = evento.target.closest(".btn-agregar-circular");
+  if (botonAgregar && !botonAgregar.disabled) {
+    const item = obtenerProductoPorId(botonAgregar.dataset.id);
+    if (item) document.dispatchEvent(new CustomEvent("carrito:agregar", { detail: item }));
+    return;
+  }
+
+  const botonFav = evento.target.closest(".fav-btn");
+  if (botonFav) {
+    const activo = botonFav.getAttribute("aria-pressed") === "true";
+    botonFav.setAttribute("aria-pressed", String(!activo));
+    botonFav.classList.toggle("activo", !activo);
+    botonFav.textContent = !activo ? "♥" : "♡";
+  }
+});
+
+// -------------------------------------------------------------
+// Arranque
+// -------------------------------------------------------------
+iniciarCarga();
