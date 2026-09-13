@@ -102,7 +102,7 @@ function pintarCarrito() {
   cartItemsEl.innerHTML = "";
 
   if (carrito.length === 0) {
-    cartItemsEl.innerHTML = `<p class="cart-item-vacio">Tu carrito está vacío. Explora el menú y agrega algo rico 🔥</p>`;
+    cartItemsEl.innerHTML = `<p class="cart-item-vacio">Tu carrito está vacío. Explora el menú y agrega algo rico</p>`;
     if (btnContinuar) btnContinuar.disabled = true;
     if (cartTotalEl) cartTotalEl.textContent = formatearPrecio(0);
     return;

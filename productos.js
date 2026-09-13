@@ -23,7 +23,7 @@ const tabsPrecio = document.getElementById("filtro-precio-tabs");
 const tabsCategorias = document.getElementById("categorias-tabs");
 
 let categoriaActiva = "Plato Principal";
-let rangoPrecioActivo = "todos";
+let precioMaximoActivo = 100;
 
 // -------------------------------------------------------------
 // Utilidades
@@ -143,9 +143,7 @@ function aplicarFiltrosYPintar() {
     }
 
     const precio = Number(item.precio) || 0;
-    if (rangoPrecioActivo === "1" && precio > 20) return false;
-    if (rangoPrecioActivo === "2" && (precio < 20 || precio > 40)) return false;
-    if (rangoPrecioActivo === "3" && precio <= 40) return false;
+if (precio > precioMaximoActivo) return false;
 
     return true;
   });
@@ -250,14 +248,12 @@ tabsCategorias?.addEventListener("click", (evento) => {
 // -------------------------------------------------------------
 // Chips de filtro de precio (reemplazan al <select> anterior)
 // -------------------------------------------------------------
-tabsPrecio?.addEventListener("click", (evento) => {
-  const boton = evento.target.closest(".tab-cat");
-  if (!boton) return;
+const sliderPrecio = document.getElementById("precio-slider");
+const sliderPrecioValor = document.getElementById("precio-slider-valor");
 
-  rangoPrecioActivo = boton.dataset.precio;
-  tabsPrecio.querySelectorAll(".tab-cat").forEach((b) => b.classList.remove("active"));
-  boton.classList.add("active");
-
+sliderPrecio?.addEventListener("input", () => {
+  precioMaximoActivo = Number(sliderPrecio.value);
+  if (sliderPrecioValor) sliderPrecioValor.textContent = `S/ ${precioMaximoActivo}`;
   aplicarFiltrosYPintar();
 });
 

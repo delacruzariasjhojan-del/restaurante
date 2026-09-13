@@ -18,10 +18,8 @@
   <header class="site-header" id="site-header">
     <div class="header-inner">
       <a href="index.html#inicio" class="brand">
-        <span class="brand-mark">FB</span>
-        <span class="brand-name">El Fogón<br><small>de Don Beto</small></span>
-      </a>
-
+  <img src="img/logo.png" alt="El Fogón de Don Beto" class="brand-logo">
+</a>
       <nav class="main-nav" id="main-nav">
         <a href="index.html#inicio">Inicio</a>
         <a href="index.html#nosotros">Nosotros</a>
@@ -67,22 +65,27 @@
   <section class="menu-section" id="menu">
     <div class="section-inner">
 
-      <!-- El buscador ahora vive en el header. Aquí solo queda el botón
-           "Filtros", que en celular abre/cierra el panel de abajo. -->
-      <button type="button" class="btn-filtros-mobile" id="btn-filtros-mobile" aria-expanded="false" aria-controls="filtros-contenido">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 6h16M7 12h10M10 18h4" stroke-linecap="round"/>
-        </svg>
-        Filtros
-      </button>
+<div class="filtros-wrapper">
 
-      <!-- Categorías + precio: en escritorio siempre visibles; en celular se
-           esconden dentro de este panel y se despliegan con el botón "Filtros". -->
-      <div class="filtros-contenido" id="filtros-contenido">
+  <div class="filtros-botones-mobile">
+    <button type="button" class="btn-filtro-mobile" id="btn-categorias-mobile" aria-expanded="false" aria-controls="categorias-tabs">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 6h16M7 12h10M10 18h4" stroke-linecap="round"/>
+      </svg>
+      Categorías
+    </button>
+    <button type="button" class="btn-filtro-mobile" id="btn-precio-mobile" aria-expanded="false" aria-controls="filtro-precio-tabs">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/>
+      </svg>
+      Precio
+    </button>
+  </div>
 
         <!-- Categorías con ícono (incluye "Promociones" como una pestaña más).
              Es una tira deslizable: en celular se desliza con el dedo. -->
-        <div class="categorias-tabs categorias-tabs-iconos" id="categorias-tabs">
+       
+<div class="categorias-tabs-iconos" id="categorias-tabs">
           <button class="tab-cat-icono active" data-cat="Plato Principal">
             <span class="tab-icono" aria-hidden="true"></span>
             <span>Plato Principal</span>
@@ -122,14 +125,19 @@
         </div>
 
         <!-- Filtro de precio: tira de chips deslizable, igual que las categorías -->
-        <div class="filtro-precio-tabs" id="filtro-precio-tabs">
-          <button class="tab-cat active" data-precio="todos">Cualquier precio</button>
-          <button class="tab-cat" data-precio="1">Hasta S/ 20</button>
-          <button class="tab-cat" data-precio="2">S/ 20 – S/ 40</button>
-          <button class="tab-cat" data-precio="3">Más de S/ 40</button>
-        </div>
-      </div>
+    
+  <div class="filtro-precio-tabs" id="filtro-precio-tabs">
+  <label for="precio-slider" class="precio-slider-label">
+    Hasta <span id="precio-slider-valor">S/ 100</span>
+  </label>
+  <input type="range" id="precio-slider" min="1" max="100" step="1" value="100">
+  <div class="precio-slider-marcas">
+    <span>S/ 1</span>
+    <span>S/ 100</span>
+  </div>
+</div>
 
+</div>
       <div class="productos-grid" id="productos-grid">
         <!-- Las tarjetas se insertan aquí desde productos.js -->
         <p class="productos-estado" id="productos-estado">Cargando la carta…</p>
@@ -141,8 +149,8 @@
   <footer class="site-footer">
     <div class="section-inner footer-grid">
       <div>
-        <span class="brand-mark small">FB</span>
-        <p>El Fogón de Don Beto<br>Pollo a la brasa desde 1994.</p>
+        <span class="brand-mark small">Leyva</span>
+        <p>Pollos y Parrillas<br>desde 1994.</p>
       </div>
       <div>
         <h4>Enlaces rápidos</h4>
@@ -152,7 +160,7 @@
       </div>
       <div>
         <h4>Legal</h4>
-        <p>© <span id="anio-actual"></span> El Fogón de Don Beto. Todos los derechos reservados.</p>
+        <p>© <span id="anio-actual"></span> Leyva. Todos los derechos reservados.</p>
       </div>
     </div>
   </footer>
@@ -186,57 +194,72 @@
           <label for="c-nombre">Nombre completo</label>
           <input type="text" id="c-nombre" name="nombre" required>
         </div>
-        <div class="form-row form-row-2">
-          <div>
-            <label for="c-celular">Celular</label>
-            <input type="tel" id="c-celular" name="celular" pattern="[0-9]{9}" required>
-          </div>
-          <div>
-            <label for="c-distrito">Distrito</label>
-            <input type="text" id="c-distrito" name="distrito" required>
-          </div>
-        </div>
         <div class="form-row">
           <label for="c-direccion">Dirección exacta</label>
-          <input type="text" id="c-direccion" name="direccion" required>
+          <div class="direccion-input-row">
+            <input type="text" id="c-direccion" name="direccion" required>
+            <button type="button" class="btn-ubicacion" id="btn-usar-ubicacion" aria-label="Usar mi ubicación actual">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <p class="ubicacion-estado" id="ubicacion-estado" aria-live="polite"></p>
+          <input type="hidden" id="c-lat" name="lat">
+          <input type="hidden" id="c-lng" name="lng">
         </div>
         <div class="form-row">
-          <label for="c-referencia">Referencia</label>
-          <input type="text" id="c-referencia" name="referencia" placeholder="Ej. frente al parque, casa celeste">
+          <label for="c-celular">Celular</label>
+          <input type="tel" id="c-celular" name="celular" pattern="[0-9]{9}" required>
         </div>
+
+        <div class="form-row form-row-2">
+          <div>
+            <label for="c-tipo-entrega">Tipo de entrega</label>
+            <select id="c-tipo-entrega" name="tipo_entrega">
+              <option value="Delivery" selected>Delivery</option>
+              <option value="Recojo en tienda">Recojo en tienda</option>
+              <option value="Consumir en el local">Consumir en el local</option>
+            </select>
+          </div>
+          <div>
+            <label for="c-horario">Horario deseado</label>
+            <input type="text" id="c-horario" name="horario" placeholder="Ej. Lo antes posible, 7:30 pm">
+          </div>
+        </div>
+
         <div class="form-row">
           <label for="c-observaciones">Observaciones (opcional)</label>
           <textarea id="c-observaciones" name="observaciones" rows="2" placeholder="Sin cebolla, tocar timbre, etc."></textarea>
         </div>
 
-        <h3 class="metodo-pago-titulo">Método de pago</h3>
+        <div class="metodo-pago-encabezado">
+          <h3 class="metodo-pago-titulo">Método de pago</h3>
+          <div class="total-a-pagar">
+            <span>Total a pagar</span>
+            <strong id="total-a-pagar-monto">S/ 0.00</strong>
+            <small id="total-envio-nota" class="total-envio-nota-oculta">Incluye S/ 2.00 de envío</small>
+          </div>
+        </div>
         <div class="metodo-pago-grid">
           <label class="metodo-pago-op">
-            <input type="radio" name="metodo_pago" value="Yape" checked>
+            <input type="radio" name="metodo_pago" value="Yape" id="pago-yape" checked>
             Yape
           </label>
           <label class="metodo-pago-op">
-            <input type="radio" name="metodo_pago" value="Plin">
+            <input type="radio" name="metodo_pago" value="Plin" id="pago-plin">
             Plin
           </label>
           <label class="metodo-pago-op">
-            <input type="radio" name="metodo_pago" value="Transferencia">
+            <input type="radio" name="metodo_pago" value="Transferencia" id="pago-transferencia">
             Transferencia
           </label>
         </div>
 
         <div class="qr-box">
-          <img src="img/qr-yape.jpeg" alt="Código QR de Yape para el pago" id="qr-yape-img">
-          <p>Yapea o transfiere a: <strong>987 654 321</strong> — Roberto Salazar (Don Beto)</p>
-        </div>
-
-        <div class="form-row">
-          <label for="c-comprobante">Subir comprobante de pago</label>
-          <input type="file" id="c-comprobante" accept="image/png, image/jpeg, image/jpg" required>
-          <div class="comprobante-preview" id="comprobante-preview" hidden>
-            <img id="comprobante-preview-img" alt="Vista previa del comprobante">
-            <span id="comprobante-nombre"></span>
-          </div>
+          <img src="img/yape.png" alt="Código QR de Yape para el pago" id="qr-pago-img">
+          <p id="qr-pago-texto">Yapea a: <strong>987 654 321</strong> — Roberto Salazar (Don Beto)</p>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block" id="btn-enviar-pedido">Enviar pedido</button>
@@ -248,7 +271,7 @@
   <div class="modal-overlay" id="modal-aviso">
     <div class="modal-box modal-aviso-box">
       <h3>Antes de confirmar</h3>
-      <p><strong>IMPORTANTE:</strong> Tu pedido será preparado únicamente después de verificar el comprobante de pago. Si no adjuntas el comprobante, el restaurante no confirmará el pedido.</p>
+      <p><strong>IMPORTANTE:</strong> Tu pedido quedará registrado, pero se confirmará cuando recibamos tu comprobante de pago. Al finalizar, envíalo por WhatsApp y adjunta la captura de tu Yape, Plin o transferencia.</p>
       <div class="modal-aviso-actions">
         <button class="btn btn-outline" id="btn-aviso-cancelar">Cancelar</button>
         <button class="btn btn-primary" id="btn-aviso-entendido">Entendido</button>
@@ -261,9 +284,12 @@
     <div class="modal-box modal-exito-box">
       <div class="exito-icono">✓</div>
       <h3>¡Pedido enviado correctamente!</h3>
-      <p>Estamos verificando tu comprobante. Te avisaremos por WhatsApp en cuanto se confirme.</p>
+      <p>Falta un último paso: envíanos tu comprobante de pago por WhatsApp para que confirmemos tu pedido.</p>
       <p class="pedido-numero" id="pedido-numero-final"></p>
-      <button class="btn btn-primary" id="btn-exito-cerrar">Cerrar</button>
+      <a class="btn btn-primary btn-block" id="btn-whatsapp-comprobante" href="#" target="_blank" rel="noopener">
+        Enviar comprobante por WhatsApp
+      </a>
+      <button class="btn btn-outline btn-block" id="btn-exito-cerrar" style="margin-top:0.7rem;">Cerrar</button>
     </div>
   </div>
 
