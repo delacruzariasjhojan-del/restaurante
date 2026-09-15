@@ -281,85 +281,107 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 .nosotros-fotos { display: grid; gap: 1rem; }
 .nosotros-fotos img { border-radius: var(--radius-card); aspect-ratio: 4/3; object-fit: cover; }
 
-/* ================= CARTA (encabezado de carta.html) ================= */
-.carta-hero {
+/* ================= CTA A LA CARTA (home) ================= */
+.carta-cta {
   position: relative;
   background: var(--carbon) url("img/inicio.jpg") center/cover no-repeat;
   color: var(--paper);
-   min-height: 420px;
 }
-
-.carta-hero::before {
+.carta-cta::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(20, 14, 10, 0.55);
+  background: rgba(20, 14, 10, 0.72);
 }
-.carta-hero-inner {
+.carta-cta-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+.carta-cta-inner h2 { max-width: 16ch; }
+.carta-cta-texto { max-width: 46ch; color: rgba(247, 239, 224, 0.75); margin-bottom: 0; }
+
+.carta-cta-fotos-wrap {
   position: relative;
   z-index: 1;
 }
-.carta-hero-inner { padding-bottom: 1.5rem; }
-.carta-hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); color: var(--paper); }
-.carta-hero-texto { max-width: 52ch; color: rgba(247, 239, 224, 0.75); margin-bottom: 0; }
-
+.carta-cta-fotos {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+.carta-cta-foto {
+  aspect-ratio: 4/3;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 2px solid var(--ember-dark);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.carta-cta-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+.carta-cta-foto:hover img { transform: scale(1.05); }
 /* ================= MENÚ ================= */
 .menu-section { background: var(--cream); }
 .menu-section .section-inner { padding-top: 2rem; }
 
 /* ---- pestañas de categoría con ícono ---- */
-.categorias-tabs-iconos,
-.filtro-precio-tabs {
-  display: none;
-  position: absolute;
-  top: 100%;
-  z-index: 55;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: 0 10px 24px rgba(27, 21, 18, 0.18);
-  padding: 0.8rem;
-  margin-top: 0.4rem;
-  flex-direction: column;
-  align-items: stretch;
-  overflow-x: visible;
-}
-.categorias-tabs-iconos { left: 0; width: min(220px, 90vw); }
-.filtro-precio-tabs { right: 0; width: min(260px, 90vw); }
-.categorias-tabs-iconos.panel-abierto,
-.filtro-precio-tabs.panel-abierto { display: flex; }
-
-.categorias-tabs-iconos .tab-cat-icono {
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 0.7rem;
-  padding: 0.7rem 0.5rem;
-  border-bottom: 1px solid var(--line);
-}
-.categorias-tabs-iconos .tab-cat-icono:last-child { border-bottom: none; }
-.categorias-tabs-iconos .tab-cat-icono::after { display: none; }
 
 .tab-cat-icono {
   flex: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   background: none;
   border: none;
-  padding: 0.4rem 1.1rem 0.9rem;
+  padding: 0.3rem 0.2rem 0.9rem;
   cursor: pointer;
   color: var(--ink-soft);
   font: inherit;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   white-space: nowrap;
   position: relative;
 }
-.tab-icono {
-  font-size: 1.6rem;
-  line-height: 1;
+.tab-cat-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.15s ease;
 }
+.tab-cat-icono:active .tab-cat-img { transform: scale(0.95); }
+
+/* Carrusel de categorías */
+/* Carrusel de categorías */
+.cat-slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  width: 100%;
+}
+.cat-slider-track {
+  display: flex;
+  gap: 1.3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0.2rem 0.1rem;
+}
+
 .tab-cat-icono::after {
   content: "";
   position: absolute;
@@ -375,8 +397,6 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 .tab-cat-icono.active { color: var(--ember-dark); }
 
 /* ---- filtro de precio: tira de chips deslizable (igual patrón que categorías) ---- */
-
-.filtro-precio-tabs .tab-cat { flex: none; }
 
 .menu-toolbar {
   display: flex;
@@ -574,19 +594,6 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 .promo-card p { color: rgba(247, 239, 224, 0.7); font-size: 0.87rem; margin-bottom: 0.4em; }
 .promo-precio { color: var(--gold); font-weight: 700; }
 
-/* ================= CTA A LA CARTA (home) ================= */
-.carta-cta { background: var(--carbon); color: var(--paper); }
-.carta-cta-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-}
-.carta-cta-inner h2 { max-width: 16ch; }
-.carta-cta-texto { max-width: 46ch; color: rgba(247, 239, 224, 0.75); margin-bottom: 0; }
 
 /* ================= CONTACTO ================= */
 .contacto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
@@ -723,26 +730,7 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 }
 .pedido-numero { font-weight: 700; color: var(--ink); }
 
-.precio-slider-label { font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 0.6rem; }
-#precio-slider { width: 100%; accent-color: var(--ember); }
-.precio-slider-marcas { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--ink-soft); margin-top: 0.3rem; }
 
-.filtros-botones-mobile { display: flex; justify-content: space-between; gap: 0.7rem; margin-bottom: 1rem; }
-.filtros-wrapper { position: relative; }
-.btn-filtro-mobile {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: none;
-  border: none;
-  padding: 0.4rem 0;
-  font: inherit;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-.btn-filtro-mobile[aria-expanded="true"] { color: var(--ink); }
 /* =========================================================
    ESTILOS PARA EL BOTÓN "USAR MI UBICACIÓN ACTUAL"
    Agregar esto al final de style.css
@@ -919,6 +907,7 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 /* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
   .nosotros-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .carta-cta-fotos { grid-template-columns: repeat(2, 1fr); }
   .valores-grid { grid-template-columns: 1fr; }
   .contacto-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
@@ -949,36 +938,20 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 
 
     .header-search { flex: 1 1 auto; max-width: none; margin: 0; }
-      .header-inner { gap: 0.5rem; }
+    .header-inner { gap: 0.5rem; }
   .header-search .search-field { padding: 0.3em 0.5em; }
   .brand-name small { display: none; } /* en celular solo queda "El Fogón" para no saturar */
-.categorias-tabs-iconos,
-.filtro-precio-tabs {
-  display: none;
-  position: absolute;
-  top: 100%;
-  z-index: 55;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: 0 10px 24px rgba(27, 21, 18, 0.18);
-  padding: 0.8rem;
-  margin-top: 0.4rem;
-  flex-direction: column;
-  align-items: stretch;
-  overflow-x: visible;
-}
-.categorias-tabs-iconos { left: 0; width: min(220px, 90vw); }
-.filtro-precio-tabs { right: 0; width: min(260px, 90vw); }
-.categorias-tabs-iconos .tab-cat-icono {
-  flex-direction: row;
+  .cat-slider-track {
+  gap: 1rem;
+  flex-wrap: nowrap;
   justify-content: flex-start;
-  gap: 0.7rem;
-  padding: 0.7rem 0.5rem;
-  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
-.categorias-tabs-iconos .tab-cat-icono:last-child { border-bottom: none; }
-.categorias-tabs-iconos .tab-cat-icono::after { display: none; } /* la rayita de abajo ya no aplica en lista */
+.cat-slider-track::-webkit-scrollbar { display: none; }
+.tab-cat-img { width: 50px; height: 50px; }
 }
 
 @media (max-width: 520px) {

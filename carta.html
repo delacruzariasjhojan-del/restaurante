@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nuestra Carta — El Fogón de Don Beto</title>
+  <title>Nuestra Carta — Leyva Pollos-Chifa</title>
   <meta name="description" content="Pollo a la brasa, chaufas, hamburguesas, parrillas, combos y promociones. Arma tu pedido en línea.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -64,80 +64,15 @@
   <!-- ===================== CATÁLOGO ===================== -->
   <section class="menu-section" id="menu">
     <div class="section-inner">
-
+      
 <div class="filtros-wrapper">
-
-  <div class="filtros-botones-mobile">
-    <button type="button" class="btn-filtro-mobile" id="btn-categorias-mobile" aria-expanded="false" aria-controls="categorias-tabs">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 6h16M7 12h10M10 18h4" stroke-linecap="round"/>
-      </svg>
-      Categorías
-    </button>
-    <button type="button" class="btn-filtro-mobile" id="btn-precio-mobile" aria-expanded="false" aria-controls="filtro-precio-tabs">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/>
-      </svg>
-      Precio
-    </button>
-  </div>
-
-        <!-- Categorías con ícono (incluye "Promociones" como una pestaña más).
-             Es una tira deslizable: en celular se desliza con el dedo. -->
-       
-<div class="categorias-tabs-iconos" id="categorias-tabs">
-          <button class="tab-cat-icono active" data-cat="Plato Principal">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Plato Principal</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Promociones">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Promociones</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Entrada">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Entrada</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Acompañamiento">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Acompañamiento</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Agua">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Agua</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Gaseosa">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Gaseosa</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Refresco">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Refresco</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Postre">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Postre</span>
-          </button>
-          <button class="tab-cat-icono" data-cat="Alcohol">
-            <span class="tab-icono" aria-hidden="true"></span>
-            <span>Alcohol</span>
-          </button>
-        </div>
-
-        <!-- Filtro de precio: tira de chips deslizable, igual que las categorías -->
-    
-  <div class="filtro-precio-tabs" id="filtro-precio-tabs">
-  <label for="precio-slider" class="precio-slider-label">
-    Hasta <span id="precio-slider-valor">S/ 100</span>
-  </label>
-  <input type="range" id="precio-slider" min="1" max="100" step="1" value="100">
-  <div class="precio-slider-marcas">
-    <span>S/ 1</span>
-    <span>S/ 100</span>
+  <div class="cat-slider">
+    <div class="cat-slider-track" id="categorias-tabs">
+      <!-- botones .tab-cat-icono se generan aquí desde productos.js -->
+    </div>
   </div>
 </div>
 
-</div>
       <div class="productos-grid" id="productos-grid">
         <!-- Las tarjetas se insertan aquí desde productos.js -->
         <p class="productos-estado" id="productos-estado">Cargando la carta…</p>

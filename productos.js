@@ -19,11 +19,24 @@ const gridProductos = document.getElementById("productos-grid");
 const estadoProductos = document.getElementById("productos-estado");
 
 const inputBuscador = document.getElementById("buscador");
-const tabsPrecio = document.getElementById("filtro-precio-tabs");
 const tabsCategorias = document.getElementById("categorias-tabs");
 
 let categoriaActiva = "Plato Principal";
-let precioMaximoActivo = 100;
+
+// Imagen por categoría. La clave debe coincidir EXACTO con el nombre
+// de categoría en Firestore (o "Promociones"). Pon aquí tus rutas.
+const imagenesCategorias = {
+  "Promociones": "img/cat-promociones.png",
+  "Plato Principal": "img/cat-plato-principal.png",
+  "Entrada": "img/cat-entrada.png",
+  "Acompañamiento": "img/cat-acompanamiento.png",
+  "Agua": "img/cat-agua.png",
+  "Gaseosa": "img/cat-gaseosa.png",
+  "Refresco": "img/cat-refresco.png",
+  "Postre": "img/cat-postre.png",
+  "Alcohol": "img/cat-alcohol.png",
+};
+const imagenCategoriaPorDefecto = "img/cat-default.jpg";
 
 // -------------------------------------------------------------
 // Utilidades
@@ -142,10 +155,7 @@ function aplicarFiltrosYPintar() {
       if (!coincideNombre && !coincideDescripcion && !coincideCategoria) return false;
     }
 
-    const precio = Number(item.precio) || 0;
-if (precio > precioMaximoActivo) return false;
-
-    return true;
+        return true;
   });
 
   pintarGrid(filtrados);
@@ -211,6 +221,7 @@ async function cargarPromociones() {
 async function iniciarCarga() {
   try {
     await Promise.all([cargarProductos(), cargarPromociones()]);
+    renderCategorias();
     aplicarFiltrosYPintar();
   } catch (error) {
     console.error("Error al cargar la carta desde Firestore:", error);
@@ -234,6 +245,32 @@ export function obtenerProductoPorId(id) {
 // -------------------------------------------------------------
 // Pestañas de categoría (incluye "Promociones")
 // -------------------------------------------------------------
+// -------------------------------------------------------------
+// Genera los botones del carrusel a partir de las categorías reales
+// detectadas en Firestore. "Promociones" va siempre primero.
+// -------------------------------------------------------------
+function renderCategorias() {
+  const categoriasUnicas = [...new Set(todosLosProductos.map((p) => p.categoria))]
+    .filter((cat) => cat && cat.trim() !== "");
+
+const categoriasPrioritarias = ["Plato Principal", "Promociones", "Acompañamiento", "Entrada", "Postre"];
+const categoriasRestantes = categoriasUnicas.filter((cat) => !categoriasPrioritarias.includes(cat));
+const categorias = [...categoriasPrioritarias, ...categoriasRestantes];
+
+  tabsCategorias.innerHTML = categorias
+    .map((cat) => {
+      const imagen = imagenesCategorias[cat] || imagenCategoriaPorDefecto;
+      const activa = cat === categoriaActiva ? "active" : "";
+      return `
+        <button class="tab-cat-icono ${activa}" data-cat="${cat}">
+          <img src="${imagen}" alt="${cat}" class="tab-cat-img" loading="lazy">
+          <span>${cat}</span>
+        </button>
+      `;
+    })
+    .join("");
+}
+
 tabsCategorias?.addEventListener("click", (evento) => {
   const boton = evento.target.closest(".tab-cat-icono");
   if (!boton) return;
@@ -245,17 +282,6 @@ tabsCategorias?.addEventListener("click", (evento) => {
   aplicarFiltrosYPintar();
 });
 
-// -------------------------------------------------------------
-// Chips de filtro de precio (reemplazan al <select> anterior)
-// -------------------------------------------------------------
-const sliderPrecio = document.getElementById("precio-slider");
-const sliderPrecioValor = document.getElementById("precio-slider-valor");
-
-sliderPrecio?.addEventListener("input", () => {
-  precioMaximoActivo = Number(sliderPrecio.value);
-  if (sliderPrecioValor) sliderPrecioValor.textContent = `S/ ${precioMaximoActivo}`;
-  aplicarFiltrosYPintar();
-});
 
 // -------------------------------------------------------------
 // Buscador (sin cambios)
