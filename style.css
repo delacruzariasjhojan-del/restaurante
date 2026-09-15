@@ -281,10 +281,38 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 .nosotros-fotos { display: grid; gap: 1rem; }
 .nosotros-fotos img { border-radius: var(--radius-card); aspect-ratio: 4/3; object-fit: cover; }
 
-/* ================= CTA A LA CARTA (home) ================= */
-.carta-cta {
+/* ================= CARTA (encabezado de carta.html) ================= */
+.carta-hero {
   position: relative;
-  background: var(--carbon) url("img/inicio.jpg") center/cover no-repeat;
+  background: var(--carbon) url("img/productos.jpeg") center/cover no-repeat;
+  color: var(--paper);
+   min-height: 480px;
+}
+.carta-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 14, 10, 0.55);
+}
+.carta-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+.carta-hero-inner { padding-bottom: 1.5rem; }
+.carta-hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); color: var(--paper); }
+.carta-hero-texto { max-width: 52ch; color: rgba(247, 239, 224, 0.75); margin-bottom: 0; }
+
+/* ================= MENÚ ================= */
+.carta-cta {
+  position:relative;
+  background-image:
+    linear-gradient(180deg, rgba(13, 13, 13, 0.268), rgba(13, 13, 13, 0.373)),
+    url("img/nosotros.jpeg"); 
+  background-size:cover;
+  background-position:center;
+  background-attachment: fixed;
+  padding: 6rem 6vw;
+  text-align:center;
   color: var(--paper);
 }
 .carta-cta::before {
@@ -304,6 +332,7 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
   padding-top: 4rem;
   padding-bottom: 2rem;
 }
+.cart-cta-invert { color: rgba(247, 239, 224, 0.75); }
 .carta-cta-inner h2 { max-width: 16ch; }
 .carta-cta-texto { max-width: 46ch; color: rgba(247, 239, 224, 0.75); margin-bottom: 0; }
 
