@@ -8,27 +8,39 @@
 const navToggle = document.getElementById("nav-toggle");
 const mainNav = document.getElementById("main-nav");
 const anioActual = document.getElementById("anio-actual");
-const btnCategoriasMobile = document.getElementById("btn-categorias-mobile");
-const btnPrecioMobile = document.getElementById("btn-precio-mobile");
-const panelCategorias = document.getElementById("categorias-tabs");
-const panelPrecio = document.getElementById("filtro-precio-tabs");
 
 // -------------------------------------------------------------
 // Menú de navegación en móvil
 // -------------------------------------------------------------
+function abrirMenu() {
+  mainNav.classList.add("open");
+  navToggle?.setAttribute("aria-expanded", "true");
+}
+function cerrarMenu() {
+  mainNav.classList.remove("open");
+  navToggle?.setAttribute("aria-expanded", "false");
+}
+
 navToggle?.addEventListener("click", () => {
-  const abierto = mainNav.classList.toggle("open");
-  navToggle.setAttribute("aria-expanded", String(abierto));
+  const yaAbierto = mainNav.classList.contains("open");
+  yaAbierto ? cerrarMenu() : abrirMenu();
 });
 
 // Cierra el menú móvil al elegir una sección
 mainNav?.querySelectorAll("a").forEach((enlace) => {
-  enlace.addEventListener("click", () => {
-    mainNav.classList.remove("open");
-    navToggle?.setAttribute("aria-expanded", "false");
-  });
+  enlace.addEventListener("click", cerrarMenu);
 });
 
+// Cierra el menú móvil al hacer clic fuera de él (y fuera del botón que lo abre)
+document.addEventListener("click", (evento) => {
+  const menuAbierto = mainNav?.classList.contains("open");
+  if (!menuAbierto) return;
+
+  const clicDentroDelMenu = mainNav.contains(evento.target);
+  const clicEnElBoton = navToggle?.contains(evento.target);
+
+  if (!clicDentroDelMenu && !clicEnElBoton) cerrarMenu();
+});
 // -------------------------------------------------------------
 // Año dinámico en el footer
 // -------------------------------------------------------------
@@ -39,26 +51,3 @@ if (anioActual) anioActual.textContent = new Date().getFullYear();
 // en pantallas chicas (el CSS lo oculta en escritorio), pero el botón
 // funciona igual en cualquier tamaño por si acaso.
 // -------------------------------------------------------------
-
-function togglePanel(boton, panel, otroBoton, otroPanel) {
-  const abierto = panel.classList.toggle("panel-abierto");
-  boton.setAttribute("aria-expanded", String(abierto));
-  if (abierto) {
-    otroPanel.classList.remove("panel-abierto");
-    otroBoton.setAttribute("aria-expanded", "false");
-  }
-}
-
-btnCategoriasMobile?.addEventListener("click", () =>
-  togglePanel(btnCategoriasMobile, panelCategorias, btnPrecioMobile, panelPrecio)
-);
-btnPrecioMobile?.addEventListener("click", () =>
-  togglePanel(btnPrecioMobile, panelPrecio, btnCategoriasMobile, panelCategorias)
-);
-// Al elegir una categoría o un precio dentro del panel, en celular lo
-// cerramos para que el cliente vea de inmediato los platos filtrados.
-panelCategorias?.addEventListener("click", (evento) => {
-  if (!evento.target.closest(".tab-cat-icono")) return;
-  panelCategorias.classList.remove("panel-abierto");
-  btnCategoriasMobile?.setAttribute("aria-expanded", "false");
-});

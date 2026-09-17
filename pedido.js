@@ -28,20 +28,22 @@ const DATOS_PAGO = {
   Yape: {
     img: "img/yape.png",
     alt: "Código QR de Yape para el pago",
-    texto: "Yapea a: <strong>987 654 321</strong> — Roberto Salazar (Don Beto)",
+    numero: "987 654 321",
+    numeroLimpio: "987654321",
   },
   Plin: {
     img: "img/plin.png",
     alt: "Código QR de Plin para el pago",
-    texto: "Plinea a: <strong>987 654 321</strong> — Roberto Salazar (Don Beto)",
+    numero: "987 654 321",
+    numeroLimpio: "987654321",
   },
   Transferencia: {
     img: "img/transferencia.png",
     alt: "Datos de cuenta bancaria para transferencia",
-    texto: "Transfiere a la cuenta BCP: <strong>191-1234567-0-12</strong> — Roberto Salazar (Don Beto)",
+    numero: "191-1234567-0-12",
+    numeroLimpio: "19112345670012",
   },
 };
-
 const modalCheckout = document.getElementById("modal-checkout");
 const modalAviso = document.getElementById("modal-aviso");
 const modalExito = document.getElementById("modal-exito");
@@ -54,7 +56,6 @@ const btnAvisoCancelar = document.getElementById("btn-aviso-cancelar");
 const btnAvisoEntendido = document.getElementById("btn-aviso-entendido");
 const btnExitoCerrar = document.getElementById("btn-exito-cerrar");
 const pedidoNumeroFinal = document.getElementById("pedido-numero-final");
-const btnWhatsappComprobante = document.getElementById("btn-whatsapp-comprobante");
 
 const qrPagoImg = document.getElementById("qr-pago-img");
 const qrPagoTexto = document.getElementById("qr-pago-texto");
@@ -69,6 +70,11 @@ const ubicacionEstado = document.getElementById("ubicacion-estado");
 const selectTipoEntrega = document.getElementById("c-tipo-entrega");
 const totalAPagarMonto = document.getElementById("total-a-pagar-monto");
 const totalEnvioNota = document.getElementById("total-envio-nota");
+const bloqueDelivery = document.getElementById("bloque-delivery");
+const mensajeRecojo = document.getElementById("mensaje-recojo");
+const btnCopiarNumero = document.getElementById("btn-copiar-numero");
+const numeroPagoTexto = document.getElementById("numero-pago-texto");
+const copiarFeedback = document.getElementById("copiar-numero-feedback");
 
 // -------------------------------------------------------------
 // Calcula y muestra el total a pagar junto al método de pago:
@@ -90,6 +96,23 @@ function actualizarTotalMostrado() {
   if (totalEnvioNota) totalEnvioNota.classList.toggle("total-envio-nota-oculta", !esDelivery);
 }
 
+// Muestra/oculta Dirección + Ubicación + Referencia según el tipo
+// de entrega, y muestra el mensaje de recojo cuando corresponde.
+function actualizarVisibilidadEntrega() {
+  const esDelivery = tipoEntregaSeleccionado() === "Delivery";
+
+  if (bloqueDelivery) bloqueDelivery.hidden = !esDelivery;
+  if (mensajeRecojo) mensajeRecojo.hidden = esDelivery;
+
+  // La dirección solo es obligatoria si es Delivery.
+  if (inputDireccion) inputDireccion.required = esDelivery;
+}
+
+selectTipoEntrega?.addEventListener("change", () => {
+  actualizarTotalMostrado();
+  actualizarVisibilidadEntrega();
+});
+
 selectTipoEntrega?.addEventListener("change", actualizarTotalMostrado);
 
 // -------------------------------------------------------------
@@ -108,6 +131,7 @@ btnContinuarPedido?.addEventListener("click", () => {
   cerrarCarrito();
   abrirModal(modalCheckout);
   actualizarTotalMostrado();
+  actualizarVisibilidadEntrega();
 });
 
 // Cerrar cualquier modal con el botón "×" o el data-close
@@ -137,6 +161,23 @@ function mostrarEstadoUbicacion(mensaje, tipo) {
 // (Nominatim). Si el cliente no da permiso o falla la red, se
 // avisa y el cliente puede seguir escribiendo la dirección a mano.
 // -------------------------------------------------------------
+// -------------------------------------------------------------
+// Copiar número/cuenta de pago al portapapeles
+// -------------------------------------------------------------
+btnCopiarNumero?.addEventListener("click", async () => {
+  const numero = btnCopiarNumero.dataset.numero;
+  if (!numero) return;
+  try {
+    await navigator.clipboard.writeText(numero);
+    if (copiarFeedback) {
+      copiarFeedback.textContent = "✓ Número copiado";
+      setTimeout(() => { copiarFeedback.textContent = ""; }, 2500);
+    }
+  } catch (error) {
+    if (copiarFeedback) copiarFeedback.textContent = "No se pudo copiar. Cópialo manualmente.";
+  }
+});
+
 btnUsarUbicacion?.addEventListener("click", () => {
   if (!navigator.geolocation) {
     mostrarEstadoUbicacion("Tu navegador no permite compartir ubicación. Escribe la dirección manualmente.", "error");
@@ -195,10 +236,11 @@ btnUsarUbicacion?.addEventListener("click", () => {
 // -------------------------------------------------------------
 function actualizarDatosPago(metodo) {
   const datos = DATOS_PAGO[metodo];
-  if (!datos || !qrPagoImg || !qrPagoTexto) return;
+  if (!datos || !qrPagoImg) return;
   qrPagoImg.src = datos.img;
   qrPagoImg.alt = datos.alt;
-  qrPagoTexto.innerHTML = datos.texto;
+  if (numeroPagoTexto) numeroPagoTexto.textContent = datos.numero;
+  if (btnCopiarNumero) btnCopiarNumero.dataset.numero = datos.numeroLimpio;
 }
 
 radiosMetodoPago.forEach((radio) => {
@@ -250,16 +292,17 @@ btnAvisoEntendido?.addEventListener("click", async () => {
     const pedido = {
       numeroPedido,
       fecha: serverTimestamp(),
-      cliente: {
+           cliente: {
         nombre: datosFormulario.get("nombre"),
         celular: datosFormulario.get("celular"),
-        direccion: datosFormulario.get("direccion"),
+        direccion: datosFormulario.get("direccion") || "",
+        referencia: datosFormulario.get("referencia") || "",
         tipoEntrega,
-        horario: datosFormulario.get("horario") || "",
         observaciones: datosFormulario.get("observaciones") || "",
         lat: datosFormulario.get("lat") || null,
         lng: datosFormulario.get("lng") || null,
       },
+      numeroOperacion: datosFormulario.get("nro_operacion") || "",
       productos: carritoActual.map((item) => ({
         id: item.id,
         nombre: item.nombre,
@@ -277,17 +320,12 @@ btnAvisoEntendido?.addEventListener("click", async () => {
     // 2) Guardar en Firestore, colección "pedidos"
     await addDoc(collection(db, COL_PEDIDOS), pedido);
 
-    // 3) Armar el link de WhatsApp con el mensaje prellenado
-    const mensajeWhatsapp = `Hola, les envío el comprobante de mi pedido ${numeroPedido}`;
-    const linkWhatsapp = `https://wa.me/${WHATSAPP_RESTAURANTE}?text=${encodeURIComponent(mensajeWhatsapp)}`;
-    if (btnWhatsappComprobante) {
-      btnWhatsappComprobante.href = linkWhatsapp;
-    }
 
-    // 4) Limpiar y mostrar confirmación
+    // 3) Limpiar y mostrar confirmación
     vaciarCarrito();
     formCheckout.reset();
     actualizarTotalMostrado();
+    actualizarVisibilidadEntrega();
 
     pedidoNumeroFinal.textContent = `Número de pedido: ${numeroPedido}`;
     cerrarModal(modalCheckout);

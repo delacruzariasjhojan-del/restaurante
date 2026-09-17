@@ -55,7 +55,27 @@ function agregarProducto(producto) {
     });
   }
   persistirYPintar();
-  abrirCarrito();
+  animarAgregado();
+}
+
+// Le da un "timbrazo" al ícono del carrito y hace saltar el número,
+// para avisar que se agregó algo sin abrir el panel.
+function animarAgregado() {
+  btnCartOpen?.classList.remove("agregado");
+  cartCountEl?.classList.remove("agregado");
+
+  // Forzar reflow para poder re-disparar la animación aunque se
+  // haga clic varias veces seguidas en "agregar".
+  void btnCartOpen?.offsetWidth;
+  void cartCountEl?.offsetWidth;
+
+  btnCartOpen?.classList.add("agregado");
+  cartCountEl?.classList.add("agregado");
+
+  setTimeout(() => {
+    btnCartOpen?.classList.remove("agregado");
+    cartCountEl?.classList.remove("agregado");
+  }, 500);
 }
 
 function cambiarCantidad(id, delta) {

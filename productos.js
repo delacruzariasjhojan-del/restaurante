@@ -101,6 +101,15 @@ function crearTarjeta(item) {
   return card;
 }
 
+// Si venimos de index.html con ?buscar=algo en la URL, precargamos
+// ese texto en el buscador antes de pintar el grid.
+function aplicarBusquedaDesdeURL() {
+  const parametros = new URLSearchParams(window.location.search);
+  const texto = parametros.get("buscar");
+  if (texto && inputBuscador) {
+    inputBuscador.value = texto;
+  }
+}
 // -------------------------------------------------------------
 // Pinta el grid según la pestaña activa (Promociones o una categoría)
 // -------------------------------------------------------------
@@ -222,6 +231,7 @@ async function iniciarCarga() {
   try {
     await Promise.all([cargarProductos(), cargarPromociones()]);
     renderCategorias();
+    aplicarBusquedaDesdeURL(); // <-- nueva línea
     aplicarFiltrosYPintar();
   } catch (error) {
     console.error("Error al cargar la carta desde Firestore:", error);
