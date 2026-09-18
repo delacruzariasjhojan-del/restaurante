@@ -25,8 +25,8 @@
 
     <nav class="main-nav" id="main-nav">
       <a href="index.html#inicio">Inicio</a>
+      <a href="carta.html">Nuestra Carta</a>
       <a href="index.html#nosotros">Nosotros</a>
-      <a href="carta.html" class="nav-activo">Nuestra Carta</a>
       <a href="index.html#contacto">Contacto</a>
     </nav>
 
@@ -93,13 +93,53 @@
     </div>
   </section>
 
+   <!-- ===================== CTA A LA CARTA ===================== -->
+  <section class="carta-cta">
+  <div class="carta-cta-layout">
+    
+    <!-- Columna Izquierda: Texto, Botón y Miniaturas -->
+    <div class="carta-cta-left">
+      <p class="eyebrow-plain eyebrow-invert">¿Ya tienes hambre?</p>
+      <h2 class="invert">Revisa nuestra carta completa</h2>
+      <p class="carta-cta-texto">Pollo a la brasa, chaufas, hamburguesas, parrillas, combos y las promociones del día — todo listo para pedir en un solo lugar.</p>
+      
+      <!-- Botón en lugar del buscador -->
+      <div class="carta-cta-actions">
+        <a href="carta.html" class="btn btn-primary">Ir a Nuestra Carta</a>
+      </div>
+
+      <!-- Miniaturas (hacen clic para cambiar la imagen grande) -->
+      <div class="carta-cta-thumbnails">
+        <img src="img/plato1.png" data-src="img/plato1.png" alt="Pollo a la brasa" class="carta-thumb active" loading="lazy">
+        <img src="img/plato2.png" data-src="img/plato2.png" alt="Chaufa" class="carta-thumb" loading="lazy">
+        <img src="img/plato3.png" data-src="img/plato3.png" alt="Parrilla" class="carta-thumb" loading="lazy">
+        <img src="img/plato4.png" data-src="img/plato4.png" alt="Combo" class="carta-thumb" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Imagen Grande -->
+    <div class="carta-cta-right">
+      <div class="carta-main-image-wrap">
+        <!-- La imagen que cambiará dinámicamente -->
+        <img src="img/plato1.png" alt="Plato destacado" id="carta-main-img">
+      </div>
+    </div>
+
+  </div>
+</section>
+
   <!-- ===================== NOSOTROS ===================== -->
   <section class="nosotros" id="nosotros">
     <div class="section-inner nosotros-grid">
       <div class="nosotros-copy">
         <p class="eyebrow-plain">Nuestra historia</p>
-        <h2>Treinta años cuidando el mismo fuego</h2>
-        <p>Leyva Pollerias empezó con dos brasas en la puerta de su casa en Comas. Hoy seguimos girando el mismo tipo de pollo, marinado doce horas y dorado sobre carbón de algarrobo, porque cambiar la receta nunca estuvo en los planes.</p>
+        <h2>El sabor que reúne a las familias</h2>
+        <p class="nosotros-texto">
+      En Leyva Pollerías creemos que un buen pollo a la brasa se prepara con tiempo,
+      dedicación y los mejores ingredientes. Desde nuestros inicios trabajamos con la
+      misma pasión para ofrecer un sabor auténtico, acompañado de papas crocantes,
+      ensaladas frescas y ese toque casero que nos caracteriza.
+    </p>
 
         <div class="valores-grid">
           <div class="valor">
@@ -122,35 +162,7 @@
         <img src="img/local.jpeg" alt="Parrillero atendiendo el carbón">
       </div>
     </div>
-   <!-- ===================== CTA A LA CARTA ===================== -->
-  <section class="carta-cta">
-    <div class="section-inner carta-cta-inner">
-      <div>
-        <p class="eyebrow-plain eyebrow-invert">¿Ya tienes hambre?</p>
-        <h2 class="invert">Revisa nuestra carta completa</h2>
-        <p class="carta-cta-texto">Pollo a la brasa, chaufas, hamburguesas, parrillas, combos y las promociones del día — todo listo para pedir en un solo lugar.</p>
-      </div>
-      <a href="carta.html" class="btn btn-primary">Ir a Nuestra Carta</a>
-    </div>
-
-    <div class="carta-cta-fotos-wrap">
-      <div class="carta-cta-fotos">
-        <div class="carta-cta-foto">
-          <img src="img/plato1.png" alt="Pollo a la brasa" loading="lazy">
-        </div>
-        <div class="carta-cta-foto">
-          <img src="img/plato2.png" alt="Chaufa" loading="lazy">
-        </div>
-        <div class="carta-cta-foto">
-          <img src="img/plato3.png" alt="Parrilla" loading="lazy">
-        </div>
-        <div class="carta-cta-foto">
-          <img src="img/plato4.png" alt="Combo" loading="lazy">
-        </div>
-      </div>
-    </div>
   </section>
-
   <!-- ===================== CONTACTO ===================== -->
   <section class="contacto-section" id="contacto">
     <div class="section-inner contacto-grid">
@@ -336,6 +348,7 @@
   <script type="module" src="carrito.js"></script>
   <script type="module" src="pedido.js"></script>
   <script type="module" src="app.js"></script>
+  <script type="module" src="carta.js"></script>
   <script type="module" src="buscador-inicio.js"></script>
   <script type="module" src="buscador-toggle.js"></script>
   

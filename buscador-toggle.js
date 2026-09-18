@@ -24,4 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Cierra al hacer clic en el fondo oscuro (fuera del buscador)
   overlayBuscador?.addEventListener("click", cerrarBuscador);
+
+  
 });

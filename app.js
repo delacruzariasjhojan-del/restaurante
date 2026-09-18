@@ -41,11 +41,76 @@ document.addEventListener("click", (evento) => {
 
   if (!clicDentroDelMenu && !clicEnElBoton) cerrarMenu();
 });
+
+// -------------------------------------------------------------
+// Buscador: muestra/oculta el botón de limpiar (X) según si hay texto
+// -------------------------------------------------------------
+document.querySelectorAll('.search-field').forEach((campo) => {
+  const input = campo.querySelector('input[type="search"]');
+  const btnLimpiar = campo.querySelector('.btn-limpiar-buscador');
+  if (!input || !btnLimpiar) return;
+
+  const actualizar = () => campo.classList.toggle('tiene-texto', input.value.length > 0);
+
+  input.addEventListener('input', actualizar);
+  btnLimpiar.addEventListener('click', () => {
+    input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.focus();
+  });
+  actualizar();
+});
+
 // -------------------------------------------------------------
 // Año dinámico en el footer
 // -------------------------------------------------------------
 if (anioActual) anioActual.textContent = new Date().getFullYear();
 
+// -------------------------------------------------------------
+// Marca como activo el enlace del menú en el que se hace clic.
+// -------------------------------------------------------------
+// -------------------------------------------------------------
+// Marca como activo el enlace del menú según la URL actual
+// (archivo + #ancla), y también al hacer clic (para feedback
+// inmediato antes de que la página recargue, si aplica).
+// -------------------------------------------------------------
+const todosLosEnlacesNav = document.querySelectorAll(".main-nav a");
+
+function marcarEnlaceActivoSegunUrl() {
+  const paginaActual = window.location.pathname.split("/").pop() || "index.html";
+  const esPaginaIndex = paginaActual === "index.html" || paginaActual === "";
+  const hashActual = window.location.hash || (esPaginaIndex ? "#inicio" : "");
+
+  let coincidencia = null;
+
+  todosLosEnlacesNav.forEach((enlace) => {
+    const href = enlace.getAttribute("href");
+    if (!href) return;
+
+    const [paginaEnlace, hashEnlace] = href.split("#");
+    if (paginaEnlace !== paginaActual) return;
+
+    if (hashEnlace && `#${hashEnlace}` === hashActual) {
+      coincidencia = enlace; // coincidencia exacta por ancla
+    } else if (!hashEnlace && !coincidencia) {
+      coincidencia = enlace; // enlace sin ancla, ej. "carta.html"
+    }
+  });
+
+  if (coincidencia) {
+    todosLosEnlacesNav.forEach((a) => a.classList.remove("nav-activo"));
+    coincidencia.classList.add("nav-activo");
+  }
+}
+
+marcarEnlaceActivoSegunUrl();
+
+todosLosEnlacesNav.forEach((enlace) => {
+  enlace.addEventListener("click", () => {
+    todosLosEnlacesNav.forEach((a) => a.classList.remove("nav-activo"));
+    enlace.classList.add("nav-activo");
+  });
+});
 // -------------------------------------------------------------
 // Panel de "Filtros" en celular (carta.html): solo existe visualmente
 // en pantallas chicas (el CSS lo oculta en escritorio), pero el botón
