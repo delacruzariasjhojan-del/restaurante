@@ -111,10 +111,28 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
   top: 0;
   left: 0;
   right: 0;
-  z-index: 60;
+  z-index: 66;
   height: var(--header-h);
-  background: var(--rojo);
+  background: transparent;
   border-bottom: 1px solid var(--line-invert);
+  transition: transform 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+}
+
+/* Se oculta deslizándose hacia arriba al bajar el scroll */
+.site-header.header-oculto {
+  transform: translateY(-100%);
+}
+
+/* Reaparece al subir el scroll: degradado semi-transparente en rojo,
+   para no verse plano ni mezclarse con el texto de fondo */
+.site-header.header-scroll {
+  background: linear-gradient(
+    180deg,
+    rgba(233, 2, 2, 0.92) 0%,
+    rgba(233, 2, 2, 0.8) 55%,
+    rgba(233, 2, 2, 0.55) 100%
+  );
+  border-bottom: 1px solid rgba(233, 2, 2, 0.35);
 }
 
 /* Espaciador: ocupa el lugar que dejó el header al volverse "fixed",
@@ -151,7 +169,19 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
   flex: 1;
   justify-content: center;
 }
+.nav-contacto-movil {
+  display: none;
+}
 
+.nav-mini-header {
+  display: none;
+}
+.nav-menu-label {
+  display: none;
+}
+.nav-body {
+  display: contents;
+}
 .main-nav a {
   text-decoration: none;
   color: var(--white);
@@ -257,6 +287,7 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
   margin: 0 auto;
   padding: 3rem 1.5rem 5rem;
   width: 100%;
+  transform: translateY(-50px);
 }
 .hero-kicker { color: var(--gold); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 0.8rem; }
 .hero-title {
@@ -301,7 +332,7 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 /* ================= CARTA (encabezado de carta.html) ================= */
 .carta-hero {
   position: relative;
-  background: var(--carbon) url("img/center.jpeg") center/cover no-repeat;
+  background: var(--carbon) url("img/carta_inicio.png") center/cover no-repeat;
   color: var(--paper);
    min-height: 500px;
 }
@@ -1031,64 +1062,6 @@ text-align: center;
 }
 .pedido-numero { font-weight: 700; color: var(--ink); }
 
-
-/* =========================================================
-   ESTILOS PARA EL BOTÓN "USAR MI UBICACIÓN ACTUAL"
-   Agregar esto al final de style.css
-   ========================================================= */
-
-.direccion-input-row {
-  display: flex;
-  gap: 0.5rem;
-}
-.direccion-input-row input {
-  flex: 1;
-}
-
-.btn-ubicacion {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--line);
-  background: var(--paper);
-  color: var(--ember);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-.btn-ubicacion:hover { border-color: var(--ember); }
-.btn-ubicacion:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.ubicacion-estado {
-  font-size: 0.82rem;
-  font-weight: 600;
-  margin: 0.5rem 0 0;
-  padding: 0.5em 0.8em;
-  border-radius: var(--radius-card);
-  display: none;
-}
-.ubicacion-estado:not(:empty) { display: block; }
-
-.ubicacion-estado--cargando {
-  background: var(--line);
-  color: var(--ink-soft);
-}
-.ubicacion-estado--ok {
-  background: rgba(122, 155, 90, 0.15);
-  color: #4a6b34;
-}
-.ubicacion-estado--aviso {
-  background: rgba(200, 155, 60, 0.18);
-  color: var(--ember-dark);
-}
-.ubicacion-estado--error {
-  background: rgba(214, 72, 12, 0.12);
-  color: var(--ember-dark);
-}
-
 /* =========================================================
    ESTILOS PARA EL BOTÓN "USAR MI UBICACIÓN ACTUAL"
    Agregar esto al final de style.css
@@ -1245,26 +1218,136 @@ text-align: center;
 }
 
 @media (max-width: 760px) {
-    .main-nav {
-    position: fixed;
-    top: var(--header-h);
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-height: 0;
-    background: var(--rojo);
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-    padding: 0 1.5rem;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    box-shadow: 0 12px 24px -6px rgba(20, 14, 10, 0.35);
-    z-index: 55;
-  }
-  .header-inner { padding-left: 0.8rem; }
-  .main-nav.open { max-height: 400px; padding: 1.2rem 1.5rem 1.5rem; overflow-y: auto; }
-  .main-nav a { padding: 0.9rem 0; width: 100%; display: inline-block; width: fit-content; }
+ .header-inner { padding-left: 0.8rem; }
+.carta-hero {
+  background-image: url("img/carta7.jpg");
+}
+/* Panel/drawer que se desliza desde la izquierda */
+.main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(320px, 85vw);
+  height: 100vh;
+  background: var(--rojo);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  box-shadow: 12px 0 28px rgba(20, 14, 10, 0.35);
+  z-index: 65;
+}
+.main-nav.open {
+  transform: translateX(0);
+}
+
+/* Etiqueta decorativa "MENÚ" arriba del panel (no es un botón) */
+.nav-mini-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.25rem 0.5rem;
+  position: relative;
+}
+.nav-menu-label {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 1.6rem;
+  background: var(--paper);
+  color: var(--rojo);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  padding: 0.5em 1.4em;
+  border-radius: 999px;
+  text-align: center;
+}
+
+.nav-mini-logo {
+  height: 60px;
+  width: auto;
+  transform: translateY(-50px);   /* ← solo esto sube la imagen */
+}
+.nav-body {
+  padding: 1.5rem 1.25rem;
+  position: relative;
+  display: block;   /* ← agregar */
+}
+.main-nav a {
+  display: block;
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  margin-bottom: 0.7rem;
+  background: var(--rojo-oscuro);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(20, 14, 10, 0.28);
+  font-size: 0.95rem;
+}
+.main-nav a::after { display: none; }
+.main-nav a:last-of-type { margin-bottom: 0; }
+
+.nav-contacto-movil {
+  display: block;
+  margin-top: 1.5rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.nav-contacto-item {
+  margin-bottom: 1rem;
+}
+.nav-contacto-item strong {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+  margin-bottom: 0.2rem;
+}
+.nav-contacto-item span,
+.nav-contacto-item a {
+  font-size: 0.9rem;
+  color: rgba(247, 239, 224, 0.85);
+  text-decoration: none;
+}
+.nav-contacto-item a:hover { text-decoration: underline; }
+
+.btn-whatsapp-menu {
+  display: block;
+  text-align: center;
+  margin-top: 1.2rem;
+  padding: 0.9em 1.2em;
+  background: var(--rojo-oscuro);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--paper);
+  font-weight: 700;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(20, 14, 10, 0.28);
+}
+.btn-whatsapp-menu:hover {
+  background: var(--rojo);
+}
+/* Fondo oscuro detrás del panel */
+.overlay-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 14, 10, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 63;
+}
+.overlay-menu.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
   .nav-toggle { display: flex; }
   .section-inner { padding: 3.5rem 1.25rem; }
 
@@ -1275,7 +1358,6 @@ text-align: center;
     gap: 0.5rem;
   }
   .header-search .search-field { padding: 0.3em 0.5em; }
-  .brand-name small { display: none; } /* en celular solo queda "El Fogón" para no saturar */
   .cat-slider-track {
   gap: 1rem;
   flex-wrap: nowrap;

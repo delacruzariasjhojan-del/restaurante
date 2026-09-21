@@ -20,15 +20,42 @@
   <header class="site-header" id="site-header">
     <div class="header-inner">
     <a href="index.html#inicio" class="brand">
-      <img src="img/logo.png" alt="El Fogón de Don Beto" class="brand-logo">
+      <img src="img/logo1.png" alt="Leyva Pollos-Chifa" class="brand-logo">
     </a>
 
     <nav class="main-nav" id="main-nav">
-      <a href="index.html#inicio">Inicio</a>
-      <a href="carta.html">Nuestra Carta</a>
-      <a href="index.html#nosotros">Nosotros</a>
-      <a href="index.html#contacto">Contacto</a>
-    </nav>
+  <div class="nav-mini-header">
+    <img src="img/logo1.png" alt="Leyva Pollos-Chifa" class="nav-mini-logo">
+  </div>
+
+  <div class="nav-body">
+    <span class="nav-menu-label">MENÚ</span>
+
+    <a href="index.html#inicio">Inicio</a>
+    <a href="carta.html">Nuestra Carta</a>
+    <a href="index.html#nosotros">Nosotros</a>
+    <a href="index.html#contacto">Contacto</a>
+
+    <div class="nav-contacto-movil">
+      <div class="nav-contacto-item">
+        <strong>Horario</strong>
+        <span>Todos los días, 12:00 p. m. – 11:00 p. m.</span>
+      </div>
+
+      <div class="nav-contacto-item">
+        <strong>Dirección</strong>
+        <span>Av. Los Álamos 456, Comas, Lima</span>
+      </div>
+      <div class="nav-contacto-item">
+        <strong>Teléfono</strong>
+        <span><a href="tel:+511234567">(01) 123-4567</a></span>
+      </div>
+      <a href="https://wa.me/51987654321" target="_blank" rel="noopener" class="btn-whatsapp-menu">
+        Escríbenos por WhatsApp
+      </a>
+    </div>
+  </div>
+</nav>
 
     <div class="header-search" id="header-search">
       <div class="search-field">
@@ -71,17 +98,20 @@
       </button>
     </div>
   </div>
-  </div>
 <div class="header-spacer"></div>
 <div class="overlay-buscador" id="overlay-buscador"></div>
 </header>
+<div class="overlay-menu" id="overlay-menu"></div>
 
   <!-- ===================== HERO ===================== -->
   <section class="hero" id="inicio">
     <div class="hero-media">
-      <img src="img/inicioo.jpeg" alt="Pollo a la brasa dorándose sobre carbón" loading="eager">
-      <div class="hero-scrim"></div>
-    </div>
+  <picture>
+    <source media="(max-width: 760px)" srcset="img/hero6.jpg">
+    <img src="img/hero2.png" alt="Pollo a la brasa dorándose sobre carbón" loading="eager">
+  </picture>
+  <div class="hero-scrim"></div>
+</div>
     <div class="hero-content">
       <p class="hero-kicker">Desde 1994 · Sabor que nos acompaña</p>
       <h1 class="hero-title">EL SABOR<br>DE SIEMPRE</h1>

@@ -12,15 +12,18 @@ const anioActual = document.getElementById("anio-actual");
 // -------------------------------------------------------------
 // Menú de navegación en móvil
 // -------------------------------------------------------------
+const overlayMenu = document.getElementById("overlay-menu");
+
 function abrirMenu() {
   mainNav.classList.add("open");
   navToggle?.setAttribute("aria-expanded", "true");
+  overlayMenu?.classList.add("visible");
 }
 function cerrarMenu() {
   mainNav.classList.remove("open");
   navToggle?.setAttribute("aria-expanded", "false");
+  overlayMenu?.classList.remove("visible");
 }
-
 navToggle?.addEventListener("click", () => {
   const yaAbierto = mainNav.classList.contains("open");
   yaAbierto ? cerrarMenu() : abrirMenu();
@@ -111,6 +114,46 @@ todosLosEnlacesNav.forEach((enlace) => {
     enlace.classList.add("nav-activo");
   });
 });
+
+// -------------------------------------------------------------
+// Header: transparente en el tope de la página. Al bajar el
+// scroll se oculta (sube y desaparece). Al subir el scroll,
+// reaparece con un degradado rojo semi-transparente para que
+// no se mezcle con el contenido de fondo.
+// -------------------------------------------------------------
+const siteHeader = document.getElementById("site-header");
+
+if (siteHeader) {
+  let ultimoScrollY = window.scrollY;
+  let ticking = false;
+  const UMBRAL = 80; // px de margen antes de empezar a ocultarlo, para evitar parpadeos cerca del tope
+
+  function actualizarHeaderSegunScroll() {
+    const scrollActual = window.scrollY;
+
+    if (scrollActual <= 0) {
+      // Tope de la página: header transparente y visible
+      siteHeader.classList.remove("header-oculto", "header-scroll");
+    } else if (scrollActual > ultimoScrollY && scrollActual > UMBRAL) {
+      // Bajando: se oculta
+      siteHeader.classList.add("header-oculto");
+    } else if (scrollActual < ultimoScrollY) {
+      // Subiendo: reaparece con degradado
+      siteHeader.classList.remove("header-oculto");
+      siteHeader.classList.add("header-scroll");
+    }
+
+    ultimoScrollY = scrollActual;
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      window.requestAnimationFrame(actualizarHeaderSegunScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+}
 // -------------------------------------------------------------
 // Panel de "Filtros" en celular (carta.html): solo existe visualmente
 // en pantallas chicas (el CSS lo oculta en escritorio), pero el botón
