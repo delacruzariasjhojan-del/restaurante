@@ -1232,6 +1232,7 @@ text-align: center;
   background: var(--rojo);
   flex-direction: column;
   align-items: stretch;
+  justify-content: flex-start;
   gap: 0;
   padding: 0;
   overflow-y: auto;
@@ -1249,13 +1250,13 @@ text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem 1.25rem 0.5rem;
+   padding: 0.7rem 1.25rem 0.3rem; 
   position: relative;
 }
 .nav-menu-label {
   display: block;
   width: fit-content;
-  margin: 0 auto 1.6rem;
+  margin: 0 auto 1rem;   
   background: var(--paper);
   color: var(--rojo);
   font-family: var(--font-display);
@@ -1270,7 +1271,6 @@ text-align: center;
 .nav-mini-logo {
   height: 60px;
   width: auto;
-  transform: translateY(-50px);   /* ← solo esto sube la imagen */
 }
 .nav-body {
   padding: 1.5rem 1.25rem;
@@ -1280,25 +1280,26 @@ text-align: center;
 .main-nav a {
   display: block;
   width: 100%;
-  padding: 0.95rem 1.1rem;
-  margin-bottom: 0.7rem;
+   padding: 0.8rem 1.1rem;           
+  margin-bottom: 0.5rem;  
   background: var(--rojo-oscuro);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(20, 14, 10, 0.28);
   font-size: 0.95rem;
 }
+
 .main-nav a::after { display: none; }
 .main-nav a:last-of-type { margin-bottom: 0; }
 
 .nav-contacto-movil {
   display: block;
-  margin-top: 1.5rem;
-  padding-top: 1.3rem;
+   margin-top: 1rem;            
+  padding-top: 1rem;  
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 .nav-contacto-item {
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem; 
 }
 .nav-contacto-item strong {
   display: block;

@@ -18,11 +18,13 @@ function abrirMenu() {
   mainNav.classList.add("open");
   navToggle?.setAttribute("aria-expanded", "true");
   overlayMenu?.classList.add("visible");
+  document.body.style.overflow = "hidden"; 
 }
 function cerrarMenu() {
   mainNav.classList.remove("open");
   navToggle?.setAttribute("aria-expanded", "false");
   overlayMenu?.classList.remove("visible");
+    document.body.style.overflow = ""; 
 }
 navToggle?.addEventListener("click", () => {
   const yaAbierto = mainNav.classList.contains("open");
