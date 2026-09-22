@@ -128,19 +128,32 @@ const siteHeader = document.getElementById("site-header");
 if (siteHeader) {
   let ultimoScrollY = window.scrollY;
   let ticking = false;
-  const UMBRAL = 80; // px de margen antes de empezar a ocultarlo, para evitar parpadeos cerca del tope
+  const UMBRAL = 80;
 
+  // Aplica el estado SOLO según la posición actual (sin comparar
+  // dirección). Se usa al cargar/recargar la página, para no
+  // depender de si el navegador restauró el scroll de forma animada.
+  function fijarEstadoSegunPosicion() {
+    const scrollActual = window.scrollY;
+    if (scrollActual > UMBRAL) {
+      siteHeader.classList.remove("header-oculto");
+      siteHeader.classList.add("header-scroll");
+    } else {
+      siteHeader.classList.remove("header-oculto", "header-scroll");
+    }
+    ultimoScrollY = scrollActual;
+  }
+
+  // Esta SÍ compara dirección: se usa mientras el usuario scrollea
+  // activamente (para el efecto de ocultar al bajar / mostrar al subir).
   function actualizarHeaderSegunScroll() {
     const scrollActual = window.scrollY;
 
     if (scrollActual <= 0) {
-      // Tope de la página: header transparente y visible
       siteHeader.classList.remove("header-oculto", "header-scroll");
     } else if (scrollActual > ultimoScrollY && scrollActual > UMBRAL) {
-      // Bajando: se oculta
       siteHeader.classList.add("header-oculto");
     } else if (scrollActual < ultimoScrollY) {
-      // Subiendo: reaparece con degradado
       siteHeader.classList.remove("header-oculto");
       siteHeader.classList.add("header-scroll");
     }
@@ -155,6 +168,12 @@ if (siteHeader) {
       ticking = true;
     }
   }, { passive: true });
+
+  // Se aplica varias veces al cargar, por si el navegador restaura
+  // el scroll de forma animada o tardía tras el evento "load".
+  fijarEstadoSegunPosicion();
+  window.addEventListener("load", fijarEstadoSegunPosicion);
+  setTimeout(fijarEstadoSegunPosicion, 300);
 }
 // -------------------------------------------------------------
 // Panel de "Filtros" en celular (carta.html): solo existe visualmente
