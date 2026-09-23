@@ -1437,15 +1437,11 @@ text-align: center;
   background: linear-gradient(180deg, rgba(20, 14, 10, 0.94) 8%, rgba(20, 14, 10, 0.214) 45%, rgba(20, 14, 10, 0) 100%);
 }
  /* Sube el texto 20px más, independiente del padre */
-  .hero-kicker,
-  .hero-title,
-  .hero-tagline {
-    transform: translateY(-60px);
-  }
+ 
 
   /* Baja los botones 50px, independiente del padre */
   .hero-actions {
-    transform: translateY(70px);
+    transform: translateY(60px);
   }
 .main-nav {
   position: fixed;
