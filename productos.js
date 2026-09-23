@@ -101,6 +101,29 @@ function crearTarjeta(item) {
   return card;
 }
 
+// Da una señal visual notoria en el propio botón circular al agregar:
+// cambia el ícono a un check, se pone verde y hace un "pop", por un
+// instante breve, luego vuelve a la normalidad.
+function mostrarFeedbackAgregado(boton) {
+  if (boton.dataset.animando === "1") return; // evita solaparse si hacen doble clic
+  boton.dataset.animando = "1";
+
+  const iconoOriginal = boton.innerHTML;
+
+  boton.classList.add("btn-agregar-exito");
+  boton.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
+      <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+
+  setTimeout(() => {
+    boton.classList.remove("btn-agregar-exito");
+    boton.innerHTML = iconoOriginal;
+    boton.dataset.animando = "0";
+  }, 900);
+}
+
 // Si venimos de index.html con ?buscar=algo en la URL, precargamos
 // ese texto en el buscador antes de pintar el grid.
 function aplicarBusquedaDesdeURL() {
@@ -133,6 +156,15 @@ function aplicarFiltrosYPintar() {
   const texto = (inputBuscador?.value || "").trim();
   const hayBusqueda = texto.length > 0;
 
+  // Avisamos al resto del sitio (app.js) si hay una búsqueda activa,
+  // para que el header/buscador NO se oculte al bajar el scroll.
+  document.dispatchEvent(new CustomEvent("buscador:estado", { detail: { activo: hayBusqueda } }));
+
+  // Si el usuario empieza a escribir, bajamos hacia la grilla.
+  if (hayBusqueda) {
+    document.getElementById("menu")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   // Mientras hay algo escrito en el buscador, ninguna pestaña de categoría
   // queda marcada como activa (visualmente), porque el buscador manda y
   // busca en todo, sin importar la categoría seleccionada.
@@ -164,7 +196,7 @@ function aplicarFiltrosYPintar() {
       if (!coincideNombre && !coincideDescripcion && !coincideCategoria) return false;
     }
 
-        return true;
+    return true;
   });
 
   pintarGrid(filtrados);
@@ -297,6 +329,13 @@ tabsCategorias?.addEventListener("click", (evento) => {
 // Buscador (sin cambios)
 // -------------------------------------------------------------
 inputBuscador?.addEventListener("input", aplicarFiltrosYPintar);
+inputBuscador?.addEventListener("keydown", (evento) => {
+  if (evento.key === "Enter") {
+    evento.preventDefault();
+    inputBuscador.blur();
+    document.dispatchEvent(new CustomEvent("buscador:cerrar"));
+  }
+});
 
 // -------------------------------------------------------------
 // Agregar al carrito (delegación) y favoritos (solo visual)
@@ -305,7 +344,10 @@ gridProductos?.addEventListener("click", (evento) => {
   const botonAgregar = evento.target.closest(".btn-agregar-circular");
   if (botonAgregar && !botonAgregar.disabled) {
     const item = obtenerProductoPorId(botonAgregar.dataset.id);
-    if (item) document.dispatchEvent(new CustomEvent("carrito:agregar", { detail: item }));
+    if (item) {
+      document.dispatchEvent(new CustomEvent("carrito:agregar", { detail: item }));
+      mostrarFeedbackAgregado(botonAgregar);
+    }
     return;
   }
 

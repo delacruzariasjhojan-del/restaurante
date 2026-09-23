@@ -128,8 +128,16 @@ const siteHeader = document.getElementById("site-header");
 if (siteHeader) {
   let ultimoScrollY = window.scrollY;
   let ticking = false;
+  let buscadorActivo = false; 
   const UMBRAL = 80;
 
+  document.addEventListener("buscador:estado", (evento) => {
+    buscadorActivo = !!evento.detail?.activo;
+    if (buscadorActivo) {
+      siteHeader.classList.remove("header-oculto");
+      siteHeader.classList.add("header-scroll");
+    }
+  });
   // Aplica el estado SOLO según la posición actual (sin comparar
   // dirección). Se usa al cargar/recargar la página, para no
   // depender de si el navegador restauró el scroll de forma animada.
@@ -147,6 +155,13 @@ if (siteHeader) {
   // Esta SÍ compara dirección: se usa mientras el usuario scrollea
   // activamente (para el efecto de ocultar al bajar / mostrar al subir).
   function actualizarHeaderSegunScroll() {
+     if (buscadorActivo) {
+    siteHeader.classList.remove("header-oculto");
+    siteHeader.classList.add("header-scroll");
+    ultimoScrollY = window.scrollY;
+    ticking = false;
+    return; // no evalúa dirección de scroll mientras se busca
+  }
     const scrollActual = window.scrollY;
 
     if (scrollActual <= 0) {

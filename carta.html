@@ -139,7 +139,7 @@
   <div class="section-inner footer-grid">
     <div class="footer-brand">
       <div class="footer-logo-circle">
-  <img src="img/logo.png" alt="BRASA & FUEGO" class="footer-logo">
+  <img src="img/logo-footer.png" alt="BRASA & FUEGO" class="footer-logo">
 </div>
       <p class="footer-description">Pollo a la brasa y parrillas con el sabor de siempre, desde 1994.</p>
       <div class="footer-redes">
@@ -204,17 +204,17 @@
 
         <!-- 1. Nombre -->
         <div class="form-row">
-          <label for="c-nombre">Nombre completo</label>
-          <input type="text" id="c-nombre" name="nombre" required>
-        </div>
+      <label for="c-nombre">Nombre completo</label>
+      <input type="text" id="c-nombre" name="nombre" autocomplete="off" placeholder="Ej. Juan Pérez" required>
+    </div>
 
-        <!-- 2. Celular -->
-        <div class="form-row">
-          <label for="c-celular">Celular</label>
-          <input type="tel" id="c-celular" name="celular" pattern="[0-9]{9}" required>
-        </div>
+        <!-- 2. Celular + 3. Tipo de entrega, en la misma fila -->
+        <div class="form-row-2">
+     <div class="form-row">
+  <label for="c-celular">Celular</label>
+  <input type="tel" id="c-celular" name="celular" pattern="[0-9]{9}" placeholder="Ej. 987654321" required>
+</div>
 
-        <!-- 3. Tipo de entrega -->
         <div class="form-row">
           <label for="c-tipo-entrega">Tipo de entrega</label>
           <select id="c-tipo-entrega" name="tipo_entrega">
@@ -222,13 +222,14 @@
             <option value="Recojo en tienda">Recojo en tienda</option>
           </select>
         </div>
+      </div>
 
         <!-- 4, 5 y 6. Dirección + botón ubicación + referencia: solo visibles en Delivery -->
         <div id="bloque-delivery">
           <div class="form-row">
             <label for="c-direccion">Dirección de entrega</label>
             <div class="direccion-input-row">
-              <input type="text" id="c-direccion" name="direccion" placeholder="Ej. Av. Arenales 245, Abancay.">
+              <input type="text" id="c-direccion" name="direccion" placeholder="Ej. Av. Arenales 245, Abancay." autocomplete="off" required>
               <button type="button" class="btn-ubicacion" id="btn-usar-ubicacion" aria-label="Usar mi ubicación actual">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
@@ -244,7 +245,7 @@
           <div class="form-row">
             <label for="c-referencia">Referencia (opcional)</label>
             <input type="text" id="c-referencia" name="referencia"
-              placeholder="Ej. Frente al Banco de la Nación, puerta azul, segundo piso.">
+              placeholder="Ej. Frente al Banco de la Nación, puerta azul, segundo piso. " autocomplete="off">
           </div>
         </div>
 
@@ -257,7 +258,7 @@
         <div class="form-row">
           <label for="c-observaciones">Observaciones (opcional)</label>
           <textarea id="c-observaciones" name="observaciones" rows="2"
-            placeholder="Sin cebolla, tocar timbre, etc."></textarea>
+            placeholder="Sin cebolla, tocar timbre, etc. " autocomplete="off"></textarea>
         </div>
 
         <div class="metodo-pago-encabezado">
@@ -297,7 +298,7 @@
 
         <div class="form-row">
           <label for="c-nro-operacion">Número de operación</label>
-          <input type="text" id="c-nro-operacion" name="nro_operacion" placeholder="Ej. 123456789" required>
+          <input type="text" id="c-nro-operacion" name="nro_operacion" placeholder="Ej. 123456789" autocomplete="off" required>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block" id="btn-enviar-pedido">Enviar pedido</button>
