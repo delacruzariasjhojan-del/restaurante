@@ -133,6 +133,13 @@ function aplicarBusquedaDesdeURL() {
     inputBuscador.value = texto;
   }
 }
+// Si venimos de index.html con ?cat=Promociones (u otra categoría)
+// en la URL, activamos esa pestaña antes de pintar el grid.
+function aplicarCategoriaDesdeURL() {
+  const parametros = new URLSearchParams(window.location.search);
+  const cat = parametros.get("cat");
+  if (cat) categoriaActiva = cat;
+}
 // -------------------------------------------------------------
 // Pinta el grid según la pestaña activa (Promociones o una categoría)
 // -------------------------------------------------------------
@@ -262,8 +269,9 @@ async function cargarPromociones() {
 async function iniciarCarga() {
   try {
     await Promise.all([cargarProductos(), cargarPromociones()]);
+    aplicarCategoriaDesdeURL(); // ← nueva línea, antes de renderCategorias
     renderCategorias();
-    aplicarBusquedaDesdeURL(); // <-- nueva línea
+    aplicarBusquedaDesdeURL();
     aplicarFiltrosYPintar();
   } catch (error) {
     console.error("Error al cargar la carta desde Firestore:", error);
